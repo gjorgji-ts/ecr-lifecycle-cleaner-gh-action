@@ -1,3 +1,5 @@
+# GitHub TypeScript Action Template
+
 ## Create Your Own Action
 
 To create your own action, you can use this repository as a template! Just

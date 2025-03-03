@@ -15,7 +15,9 @@ under the hood.
 
 ## Usage
 
-> [!NOTE] This action should be used after the
+> [!NOTE]
+>
+> This action should be used after the
 > [configure-aws-credentials](https://github.com/aws-actions/configure-aws-credentials)
 > action to configure the AWS credentials. This will set the AWS credentials in
 > the environment variables and the ECR Lifecycle Cleaner CLI will use them to
