@@ -1,11 +1,12 @@
-name: The name of your action here
-description: Provide a description here
-author: Your name or organization here
+name: 'ECR Lifecycle Cleaner Action'
+description:
+  'A GitHub Action for managing lifecycle policies and cleaning up orphaned
+  images in AWS ECR.'
+author: 'Gjorgji J.'
 
-# Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
-  icon: heart
-  color: red
+  icon: 'trash-2'
+  color: 'gray-dark'
 
 # Define your inputs here.
 inputs:
