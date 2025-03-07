@@ -15,14 +15,9 @@ inputs:
       'The version of the ECR Lifecycle Cleaner CLI to use. (e.g. 1.2.1)'
     required: true
   command:
-    description:
-      'The ECR Lifecycle Cleaner command to run (clean or setPolicy).'
+    description: 'The ECR Lifecycle Cleaner command to run and its arguments.'
     required: false
-    default: 'clean'
-  flags:
-    description: 'The flags to pass to the command (e.g. --allRepos --dryRun).'
-    required: false
-    default: '--allRepos --dryRun'
+    default: 'clean --allRepos --dryRun'
 
 # outputs:
 #   time:

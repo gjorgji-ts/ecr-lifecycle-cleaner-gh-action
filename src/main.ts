@@ -6,9 +6,10 @@ import * as path from 'path'
 
 export async function run(): Promise<void> {
   try {
-    const version: string = core.getInput('ecr-lifecycle-cleaner-version')
-    const command: string = core.getInput('command')
-    const flags: string = core.getInput('flags')
+    const version: string = core.getInput('ecr-lifecycle-cleaner-version', {
+      required: true
+    })
+    const command: string = core.getInput('command', { required: true })
 
     // Download the ecr-lifecycle-cleaner binary
     const url = `https://github.com/gjorgji-ts/ecr-lifecycle-cleaner/releases/download/v${version}/ecr-lifecycle-cleaner_Linux_x86_64.tar.gz`
@@ -38,9 +39,9 @@ export async function run(): Promise<void> {
     ])
 
     // Run the ecr-lifecycle-cleaner command
-    const args = [command, flags]
-    core.debug(`Executing command: ecr-lifecycle-cleaner ${args.join(' ')}`)
-    await exec.exec('ecr-lifecycle-cleaner', args)
+    const commandArgs = command.split(' ')
+    core.debug(`Running ecr-lifecycle-cleaner with args ${commandArgs}`)
+    await exec.exec('ecr-lifecycle-cleaner', commandArgs)
   } catch (error) {
     if (error instanceof Error) {
       core.debug(`Error: ${error.message}`)

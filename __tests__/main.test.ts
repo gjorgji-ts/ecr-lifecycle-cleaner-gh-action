@@ -2,82 +2,106 @@
  * Unit tests for the action's main functionality, src/main.ts
  */
 import { jest } from '@jest/globals'
-import * as core from '../__fixtures__/core.js'
+import path from 'path'
 
-// Create reusable mock functions
-const execMock = jest.fn().mockImplementation(() => Promise.resolve(0))
-const mkdirPMock = jest.fn().mockImplementation(() => Promise.resolve())
-const downloadToolMock = jest
-  .fn()
-  .mockImplementation(() => Promise.resolve('/tmp/download'))
-const extractTarMock = jest
-  .fn()
-  .mockImplementation(() => Promise.resolve('/tmp/extracted'))
+// Mock fixtures
+import * as core from '../__fixtures__/core'
+import * as exec from '../__fixtures__/exec'
+import * as io from '../__fixtures__/io'
+import * as tc from '../__fixtures__/tool-cache'
 
-// Mock all required dependencies
+// Setup mocks before importing the module under test
 jest.unstable_mockModule('@actions/core', () => core)
-jest.unstable_mockModule('@actions/exec', () => ({
-  exec: execMock
-}))
-jest.unstable_mockModule('@actions/io', () => ({
-  mkdirP: mkdirPMock
-}))
-jest.unstable_mockModule('@actions/tool-cache', () => ({
-  downloadTool: downloadToolMock,
-  extractTar: extractTarMock
-}))
+jest.unstable_mockModule('@actions/exec', () => exec)
+jest.unstable_mockModule('@actions/io', () => io)
+jest.unstable_mockModule('@actions/tool-cache', () => tc)
 
-const { run } = await import('../src/main.js')
+// Import the module being tested
+const { run } = await import('../src/main')
 
-describe('main.ts', () => {
+describe('ecr-lifecycle-cleaner action', () => {
+  const inputMap: Record<string, string> = {
+    'ecr-lifecycle-cleaner-version': '1.2.1',
+    command: 'clean --allRepos --dryRun'
+  }
+
   beforeEach(() => {
-    // Set up mock input values
-    core.getInput.mockImplementation((name: string) => {
-      switch (name) {
-        case 'ecr-lifecycle-cleaner-version':
-          return '1.2.1'
-        case 'command':
-          return 'clean'
-        case 'flags':
-          return '--allRepos --dryRun'
-        default:
-          return ''
+    // Set up input values
+    core.getInput.mockImplementation((name, options) => {
+      const value = inputMap[name]
+      if (value === undefined && options?.required) {
+        throw new Error(`Input required and not supplied: ${name}`)
       }
+      return value || ''
     })
   })
 
   afterEach(() => {
+    // Reset all mocks after each test
     jest.resetAllMocks()
   })
 
-  it('Successfully downloads and runs ECR Lifecycle Cleaner', async () => {
+  it('downloads, extracts and runs ecr-lifecycle-cleaner successfully', async () => {
     await run()
 
-    // Verify debug messages were logged
-    expect(core.debug).toHaveBeenCalledWith(
-      expect.stringContaining('Downloading from')
+    // Verify the full successful flow
+    expect(tc.downloadTool).toHaveBeenCalledWith(
+      'https://github.com/gjorgji-ts/ecr-lifecycle-cleaner/releases/download/v1.2.1/ecr-lifecycle-cleaner_Linux_x86_64.tar.gz'
     )
-    expect(core.debug).toHaveBeenCalledWith('Extracting downloaded file')
-    expect(core.debug).toHaveBeenCalledWith(
-      expect.stringContaining('Moving binary')
-    )
-    expect(core.debug).toHaveBeenCalledWith(
-      expect.stringContaining('Executing command: ecr-lifecycle-cleaner')
-    )
+    expect(tc.extractTar).toHaveBeenCalledWith('/tmp/downloaded-tool')
+    expect(io.mkdirP).toHaveBeenCalledWith('/usr/local/bin')
 
-    // Verify setFailed was not called
+    // Check binary setup
+    expect(exec.exec).toHaveBeenCalledWith('sudo', [
+      'mv',
+      path.join('/tmp/extracted', 'ecr-lifecycle-cleaner'),
+      '/usr/local/bin/ecr-lifecycle-cleaner'
+    ])
+    expect(exec.exec).toHaveBeenCalledWith('sudo', [
+      'chmod',
+      '+x',
+      '/usr/local/bin/ecr-lifecycle-cleaner'
+    ])
+
+    // Verify command execution with correct arguments
+    expect(exec.exec).toHaveBeenCalledWith('ecr-lifecycle-cleaner', [
+      'clean',
+      '--allRepos',
+      '--dryRun'
+    ])
+
+    // Verify no failures were reported
     expect(core.setFailed).not.toHaveBeenCalled()
   })
 
-  it('Handles errors appropriately', async () => {
-    // Mock a failure in downloadTool before running the test
-    downloadToolMock.mockImplementationOnce(() =>
-      Promise.reject(new Error('Download failed'))
-    )
+  it('handles missing required inputs', async () => {
+    // Simulate missing required input
+    core.getInput.mockImplementationOnce((name) => {
+      if (name === 'ecr-lifecycle-cleaner-version') {
+        throw new Error(
+          'Input required and not supplied: ecr-lifecycle-cleaner-version'
+        )
+      }
+      return inputMap[name] || ''
+    })
 
     await run()
 
-    // Verify that the action was marked as failed with the correct error message
-    expect(core.setFailed).toHaveBeenCalledWith('Download failed')
+    // Verify that the action failed with the appropriate error message
+    expect(core.setFailed).toHaveBeenCalledWith(
+      'Input required and not supplied: ecr-lifecycle-cleaner-version'
+    )
+  })
+
+  it('handles general errors during execution', async () => {
+    // Simulate a download failure as a general error case
+    const error = new Error('Something went wrong')
+    tc.downloadTool.mockRejectedValueOnce(error)
+
+    await run()
+
+    // Verify that the action failed with the appropriate error message
+    expect(core.setFailed).toHaveBeenCalledWith('Something went wrong')
+    expect(core.debug).toHaveBeenCalledWith('Error: Something went wrong')
   })
 })

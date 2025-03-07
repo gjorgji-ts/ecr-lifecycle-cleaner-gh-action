@@ -29823,9 +29823,10 @@ var toolCacheExports = requireToolCache();
 
 async function run() {
     try {
-        const version = coreExports.getInput('ecr-lifecycle-cleaner-version');
-        const command = coreExports.getInput('command');
-        const flags = coreExports.getInput('flags');
+        const version = coreExports.getInput('ecr-lifecycle-cleaner-version', {
+            required: true
+        });
+        const command = coreExports.getInput('command', { required: true });
         // Download the ecr-lifecycle-cleaner binary
         const url = `https://github.com/gjorgji-ts/ecr-lifecycle-cleaner/releases/download/v${version}/ecr-lifecycle-cleaner_Linux_x86_64.tar.gz`;
         coreExports.debug(`Downloading from ${url}`);
@@ -29847,9 +29848,9 @@ async function run() {
             '/usr/local/bin/ecr-lifecycle-cleaner'
         ]);
         // Run the ecr-lifecycle-cleaner command
-        const args = [command, flags];
-        coreExports.debug(`Executing command: ecr-lifecycle-cleaner ${args.join(' ')}`);
-        await execExports.exec('ecr-lifecycle-cleaner', args);
+        const commandArgs = command.split(' ');
+        coreExports.debug(`Running ecr-lifecycle-cleaner with args ${commandArgs}`);
+        await execExports.exec('ecr-lifecycle-cleaner', commandArgs);
     }
     catch (error) {
         if (error instanceof Error) {
