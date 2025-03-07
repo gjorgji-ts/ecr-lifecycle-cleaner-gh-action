@@ -10,15 +10,23 @@ branding:
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: Your input description here
+  ecr-lifecycle-cleaner-version:
+    description:
+      'The version of the ECR Lifecycle Cleaner CLI to use. (e.g. 1.2.1)'
     required: true
-    default: '1000'
+  command:
+    description:
+      'The ECR Lifecycle Cleaner command to run (clean or setPolicy).'
+    required: false
+    default: 'clean'
+  flags:
+    description: 'The flags to pass to the command (e.g. --allRepos --dryRun).'
+    required: false
+    default: '--allRepos --dryRun'
 
-# Define your outputs here.
-outputs:
-  time:
-    description: Your output description here
+# outputs:
+#   time:
+#     description: Your output description here
 
 runs:
   using: node20

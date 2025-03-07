@@ -1,62 +1,83 @@
 /**
  * Unit tests for the action's main functionality, src/main.ts
- *
- * To mock dependencies in ESM, you can create fixtures that export mock
- * functions and objects. For example, the core module is mocked in this test,
- * so that the actual '@actions/core' module is not imported.
  */
 import { jest } from '@jest/globals'
 import * as core from '../__fixtures__/core.js'
-import { wait } from '../__fixtures__/wait.js'
 
-// Mocks should be declared before the module being tested is imported.
+// Create reusable mock functions
+const execMock = jest.fn().mockImplementation(() => Promise.resolve(0))
+const mkdirPMock = jest.fn().mockImplementation(() => Promise.resolve())
+const downloadToolMock = jest
+  .fn()
+  .mockImplementation(() => Promise.resolve('/tmp/download'))
+const extractTarMock = jest
+  .fn()
+  .mockImplementation(() => Promise.resolve('/tmp/extracted'))
+
+// Mock all required dependencies
 jest.unstable_mockModule('@actions/core', () => core)
-jest.unstable_mockModule('../src/wait.js', () => ({ wait }))
+jest.unstable_mockModule('@actions/exec', () => ({
+  exec: execMock
+}))
+jest.unstable_mockModule('@actions/io', () => ({
+  mkdirP: mkdirPMock
+}))
+jest.unstable_mockModule('@actions/tool-cache', () => ({
+  downloadTool: downloadToolMock,
+  extractTar: extractTarMock
+}))
 
-// The module being tested should be imported dynamically. This ensures that the
-// mocks are used in place of any actual dependencies.
 const { run } = await import('../src/main.js')
 
 describe('main.ts', () => {
   beforeEach(() => {
-    // Set the action's inputs as return values from core.getInput().
-    core.getInput.mockImplementation(() => '500')
-
-    // Mock the wait function so that it does not actually wait.
-    wait.mockImplementation(() => Promise.resolve('done!'))
+    // Set up mock input values
+    core.getInput.mockImplementation((name: string) => {
+      switch (name) {
+        case 'ecr-lifecycle-cleaner-version':
+          return '1.2.1'
+        case 'command':
+          return 'clean'
+        case 'flags':
+          return '--allRepos --dryRun'
+        default:
+          return ''
+      }
+    })
   })
 
   afterEach(() => {
     jest.resetAllMocks()
   })
 
-  it('Sets the time output', async () => {
+  it('Successfully downloads and runs ECR Lifecycle Cleaner', async () => {
     await run()
 
-    // Verify the time output was set.
-    expect(core.setOutput).toHaveBeenNthCalledWith(
-      1,
-      'time',
-      // Simple regex to match a time string in the format HH:MM:SS.
-      expect.stringMatching(/^\d{2}:\d{2}:\d{2}/)
+    // Verify debug messages were logged
+    expect(core.debug).toHaveBeenCalledWith(
+      expect.stringContaining('Downloading from')
     )
+    expect(core.debug).toHaveBeenCalledWith('Extracting downloaded file')
+    expect(core.debug).toHaveBeenCalledWith(
+      expect.stringContaining('Moving binary')
+    )
+    expect(core.debug).toHaveBeenCalledWith(
+      expect.stringContaining('Executing command: ecr-lifecycle-cleaner')
+    )
+
+    // Verify setFailed was not called
+    expect(core.setFailed).not.toHaveBeenCalled()
   })
 
-  it('Sets a failed status', async () => {
-    // Clear the getInput mock and return an invalid value.
-    core.getInput.mockClear().mockReturnValueOnce('this is not a number')
-
-    // Clear the wait mock and return a rejected promise.
-    wait
-      .mockClear()
-      .mockRejectedValueOnce(new Error('milliseconds is not a number'))
+  it('Handles errors appropriately', async () => {
+    // Mock a failure in downloadTool before running the test
+    downloadToolMock.mockImplementationOnce(() =>
+      Promise.reject(new Error('Download failed'))
+    )
 
     await run()
 
-    // Verify that the action was marked as failed.
-    expect(core.setFailed).toHaveBeenNthCalledWith(
-      1,
-      'milliseconds is not a number'
-    )
+    // Verify that the action was marked as failed with the correct error message
+    expect(core.setFailed).toHaveBeenCalledWith('Download failed')
   })
 })

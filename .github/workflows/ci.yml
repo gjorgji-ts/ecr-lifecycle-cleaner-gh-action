@@ -53,12 +53,22 @@ jobs:
         id: checkout
         uses: actions/checkout@v4
 
+      - name: AWS Configure
+        id: aws-configure
+        uses: aws-actions/configure-aws-credentials@v4.1.0
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: 'eu-north-1'
+
       - name: Test Local Action
         id: test-action
         uses: ./
         with:
-          milliseconds: 2000
+          ecr-lifecycle-cleaner-version: '1.2.1'
+          command: 'clean'
+          flags: '--allRepos --dryRun'
 
-      - name: Print Output
-        id: output
-        run: echo "${{ steps.test-action.outputs.time }}"
+      # - name: Print Output
+      #   id: output
+      #   run: echo "${{ steps.test-action.outputs.time }}"
