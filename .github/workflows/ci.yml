@@ -66,8 +66,7 @@ jobs:
         uses: ./
         with:
           ecr-lifecycle-cleaner-version: '1.2.1'
-          command: 'clean'
-          flags: '--allRepos --dryRun'
+          command: 'clean --allRepos --dryRun'
 
       # - name: Print Output
       #   id: output
