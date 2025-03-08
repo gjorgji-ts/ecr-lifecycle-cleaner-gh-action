@@ -44,8 +44,8 @@ name: Clean ECR Orphaned Images
 
 on:
   schedule:
-    - cron: '0 0 * * 0' # Run weekly at midnight on Sunday
-  workflow_dispatch: # Allow manual triggering
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
 
 jobs:
   clean-ecr:
@@ -62,7 +62,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Clean ECR Repositories
-        uses: gjorgji-ts/ecr-lifecycle-cleaner-gh-action@v1
+        uses: gjorgji-ts/ecr-lifecycle-cleaner-gh-action@v1.0.0
         with:
           ecr-lifecycle-cleaner-version: '1.2.1'
           command: 'clean'
@@ -76,7 +76,7 @@ jobs:
 name: Apply ECR Lifecycle Policy
 
 on:
-  workflow_dispatch: # Manual trigger
+  workflow_dispatch:
 
 jobs:
   apply-policy:
@@ -93,7 +93,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Apply Lifecycle Policy
-        uses: gjorgji-ts/ecr-lifecycle-cleaner-gh-action@v1
+        uses: gjorgji-ts/ecr-lifecycle-cleaner-gh-action@v1.0.0
         with:
           ecr-lifecycle-cleaner-version: '1.2.1'
           command: 'setPolicy'
@@ -126,7 +126,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Apply Policy to Matching Repositories
-        uses: gjorgji-ts/ecr-lifecycle-cleaner-gh-action@v1
+        uses: gjorgji-ts/ecr-lifecycle-cleaner-gh-action@v1.0.0
         with:
           ecr-lifecycle-cleaner-version: '1.2.1'
           command: 'setPolicy'
