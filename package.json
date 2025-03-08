@@ -1,7 +1,7 @@
 {
   "name": "ecr-lifecycle-cleaner-action",
   "description": "A GitHub Action for managing lifecycle policies and cleaning up orphaned images in AWS ECR.",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "author": "Gjorgji J. <@gjorgji-ts>",
   "type": "module",
   "private": true,
@@ -14,7 +14,9 @@
     "url": "https://github.com/gjorgji-ts/ecr-lifecycle-cleaner-gh-action/issues"
   },
   "keywords": [
-    "actions"
+    "actions",
+    "AWS",
+    "ECR"
   ],
   "exports": {
     ".": "./dist/index.js"
@@ -37,7 +39,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.11.1"
+    "@actions/core": "^1.11.1",
+    "@actions/tool-cache": "^2.0.2"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.7",

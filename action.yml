@@ -10,15 +10,35 @@ branding:
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: Your input description here
+  ecr-lifecycle-cleaner-version:
+    description:
+      'The version of the ECR Lifecycle Cleaner CLI to use (e.g., 1.2.1)'
     required: true
-    default: '1000'
+  command:
+    description: 'The command to run: "clean" or "setPolicy"'
+    required: true
+  dry-run:
+    description: 'Whether to perform a dry run without making any changes'
+    required: false
+    default: 'true'
+  all-repos:
+    description: 'Whether to apply the command to all repositories'
+    required: false
+    default: 'true'
+  repo-list:
+    description: 'Comma-separated list of repository names to include'
+    required: false
+  repo-pattern:
+    description: 'Regex pattern to match repository names'
+    required: false
+  policy-file:
+    description:
+      'Path to the lifecycle policy JSON file (required for setPolicy command)'
+    required: false
 
-# Define your outputs here.
-outputs:
-  time:
-    description: Your output description here
+# outputs:
+#   time:
+#     description: Your output description here
 
 runs:
   using: node20

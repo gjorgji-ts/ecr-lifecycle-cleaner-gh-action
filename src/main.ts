@@ -1,27 +1,139 @@
 import * as core from '@actions/core'
-import { wait } from './wait.js'
+import * as exec from '@actions/exec'
+import * as tc from '@actions/tool-cache'
+import * as path from 'path'
+import * as os from 'os'
+import * as fs from 'fs'
 
-/**
- * The main function for the action.
- *
- * @returns Resolves when the action is complete.
- */
 export async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
+    // Get required inputs
+    const version: string = core.getInput('ecr-lifecycle-cleaner-version', {
+      required: true
+    })
+    const command: string = core.getInput('command', { required: true })
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    // Get optional inputs - global flags
+    const dryRun: boolean = core.getBooleanInput('dry-run')
+    const allRepos: boolean = core.getBooleanInput('all-repos')
+    const repoList: string = core.getInput('repo-list')
+    const repoPattern: string = core.getInput('repo-pattern')
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    // Command-specific inputs
+    const policyFile: string = core.getInput('policy-file')
 
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    // Validate command
+    if (!['clean', 'setPolicy'].includes(command)) {
+      throw new Error(
+        `Invalid command: ${command}. Must be 'clean' or 'setPolicy'`
+      )
+    }
+
+    // Validate repo selection parameters
+    if ([allRepos, repoList, repoPattern].filter(Boolean).length > 1) {
+      throw new Error(
+        'Only one of all-repos, repo-list, or repo-pattern should be specified'
+      )
+    }
+
+    if (command === 'setPolicy' && !policyFile) {
+      throw new Error('policy-file input is required for setPolicy command')
+    }
+
+    if (policyFile && !fs.existsSync(policyFile)) {
+      throw new Error(`Policy file not found: ${policyFile}`)
+    }
+
+    // Get OS and architecture for downloading the right binary
+    const platform = os.platform()
+    const arch = os.arch()
+
+    // Map to compatible format for download URL
+    const osMap: { [key: string]: string } = {
+      win32: 'Windows',
+      darwin: 'Darwin',
+      linux: 'Linux'
+    }
+
+    const archMap: { [key: string]: string } = {
+      x64: 'x86_64',
+      arm64: 'arm64'
+    }
+
+    if (!osMap[platform] || !archMap[arch]) {
+      throw new Error(
+        `Unsupported platform or architecture: ${platform} ${arch}`
+      )
+    }
+
+    const binaryOS = osMap[platform]
+    const binaryArch = archMap[arch]
+
+    // Download the ecr-lifecycle-cleaner binary
+    const url = `https://github.com/gjorgji-ts/ecr-lifecycle-cleaner/releases/download/v${version}/ecr-lifecycle-cleaner_${binaryOS}_${binaryArch}.tar.gz`
+
+    core.info(`Downloading from ${url}`)
+    const downloadPath = await tc.downloadTool(url)
+
+    core.info('Extracting downloaded file')
+    const extractedPath = await tc.extractTar(downloadPath)
+
+    // Path to binary in the extracted directory
+    let binaryName = 'ecr-lifecycle-cleaner'
+    if (platform === 'win32') {
+      binaryName = 'ecr-lifecycle-cleaner.exe'
+    }
+
+    const binaryPath = path.join(extractedPath, binaryName)
+
+    // Make binary executable
+    if (platform !== 'win32') {
+      await fs.promises.chmod(binaryPath, 0o755)
+    }
+
+    // Build the command arguments array
+    const commandArgs: string[] = [command]
+
+    // Add global flags
+    if (dryRun) {
+      commandArgs.push('--dryRun')
+    }
+
+    if (allRepos) {
+      commandArgs.push('--allRepos')
+    }
+
+    if (repoList) {
+      commandArgs.push('--repoList', repoList)
+    }
+
+    if (repoPattern) {
+      commandArgs.push('--repoPattern', repoPattern)
+    }
+
+    // Add command-specific flags
+    if (command === 'setPolicy' && policyFile) {
+      commandArgs.push('--policyFile', policyFile)
+    }
+
+    core.info(
+      `Running ecr-lifecycle-cleaner with args: ${commandArgs.join(' ')}`
+    )
+
+    // Execute the command
+    const exitCode = await exec.exec(binaryPath, commandArgs)
+
+    if (exitCode !== 0) {
+      throw new Error(`ecr-lifecycle-cleaner exited with code ${exitCode}`)
+    }
+
+    core.info('Command completed successfully')
   } catch (error) {
-    // Fail the workflow run if an error occurs
-    if (error instanceof Error) core.setFailed(error.message)
+    if (error instanceof Error) {
+      core.error(`Error: ${error.message}`)
+      core.setFailed(error.message)
+    } else {
+      core.setFailed('An unexpected error occurred')
+    }
   }
 }
