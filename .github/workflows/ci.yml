@@ -45,13 +45,77 @@ jobs:
         run: npm run ci-test
 
   test-action:
-    name: GitHub Actions Test
+    name: GitHub Actions Test - ${{ matrix.name }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: Clean All Repos (Dry Run)
+            command: clean
+            dry-run: 'true'
+            all-repos: 'true'
+            use-policy: false
+
+          - name: Clean Specific Repos (Dry Run)
+            command: clean
+            dry-run: 'true'
+            all-repos: 'false'
+            repo-list: test-repo-1,test-repo-2
+            use-policy: false
+
+          - name: Clean Using Repo Pattern (Dry Run)
+            command: clean
+            dry-run: 'true'
+            all-repos: 'false'
+            repo-pattern: '^test-.*$'
+            use-policy: false
+
+          - name: Set Policy All Repos (Dry Run)
+            command: setPolicy
+            dry-run: 'true'
+            all-repos: 'true'
+            use-policy: true
+
+          - name: Set Policy Specific Repos (Dry Run)
+            command: setPolicy
+            dry-run: 'true'
+            all-repos: 'false'
+            repo-list: test-repo-1,test-repo-2
+            use-policy: true
+
+          - name: Set Policy Using Repo Pattern (Dry Run)
+            command: setPolicy
+            dry-run: 'true'
+            all-repos: 'false'
+            repo-pattern: '^test-.*$'
+            use-policy: true
 
     steps:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
+
+      - name: Create Test Policy File
+        id: create-test-policy
+        run: |
+          echo '{
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "*TEST* older than 1 days",
+                "selection": {
+                  "tagStatus": "tagged",
+                  "tagPatternList": ["*TEST*"],
+                  "countType": "sinceImagePushed",
+                  "countUnit": "days",
+                  "countNumber": 1
+                },
+                "action": {
+                  "type": "expire"
+                }
+              }
+            ]
+          }' > test-lifecycle-policy.json
 
       - name: AWS Configure
         id: aws-configure
@@ -61,13 +125,20 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'eu-north-1'
 
-      - name: Test Local Action
-        id: test-action
+      - name: Run ECR Lifecycle Cleaner
+        id: run-test
         uses: ./
         with:
           ecr-lifecycle-cleaner-version: '1.2.1'
-          command: 'clean --allRepos --dryRun'
+          command: ${{ matrix.command }}
+          dry-run: ${{ matrix.dry-run }}
+          all-repos: ${{ matrix.all-repos }}
+          repo-list: ${{ matrix.repo-list || '' }}
+          repo-pattern: ${{ matrix.repo-pattern || '' }}
+          policy-file:
+            ${{ matrix.use-policy && 'test-lifecycle-policy.json' || '' }}
 
+      # Uncomment and use this for real action outputs when implemented
       # - name: Print Output
       #   id: output
-      #   run: echo "${{ steps.test-action.outputs.time }}"
+      #   run: echo "${{ steps.test-clean-all-dryrun.outputs.time }}"

@@ -1,8 +1,10 @@
-import require$$0 from 'os';
+import * as require$$0 from 'os';
+import require$$0__default from 'os';
 import require$$0$1 from 'crypto';
-import require$$1$1 from 'fs';
-import * as require$$1 from 'path';
-import require$$1__default from 'path';
+import * as require$$1 from 'fs';
+import require$$1__default from 'fs';
+import * as require$$1$1 from 'path';
+import require$$1__default$1 from 'path';
 import require$$2 from 'http';
 import require$$3 from 'https';
 import require$$0$4 from 'net';
@@ -114,7 +116,7 @@ function requireCommand () {
 	};
 	Object.defineProperty(command, "__esModule", { value: true });
 	command.issue = command.issueCommand = void 0;
-	const os = __importStar(require$$0);
+	const os = __importStar(require$$0__default);
 	const utils_1 = requireUtils$1();
 	/**
 	 * Commands
@@ -223,8 +225,8 @@ function requireFileCommand () {
 	// We use any as a valid input type
 	/* eslint-disable @typescript-eslint/no-explicit-any */
 	const crypto = __importStar(require$$0$1);
-	const fs = __importStar(require$$1$1);
-	const os = __importStar(require$$0);
+	const fs = __importStar(require$$1__default);
+	const os = __importStar(require$$0__default);
 	const utils_1 = requireUtils$1();
 	function issueFileCommand(command, message) {
 	    const filePath = process.env[`GITHUB_${command}`];
@@ -25200,8 +25202,8 @@ function requireSummary () {
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.summary = exports.markdownSummary = exports.SUMMARY_DOCS_URL = exports.SUMMARY_ENV_VAR = void 0;
-		const os_1 = require$$0;
-		const fs_1 = require$$1$1;
+		const os_1 = require$$0__default;
+		const fs_1 = require$$1__default;
 		const { access, appendFile, writeFile } = fs_1.promises;
 		exports.SUMMARY_ENV_VAR = 'GITHUB_STEP_SUMMARY';
 		exports.SUMMARY_DOCS_URL = 'https://docs.github.com/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary';
@@ -25507,7 +25509,7 @@ function requirePathUtils () {
 	};
 	Object.defineProperty(pathUtils, "__esModule", { value: true });
 	pathUtils.toPlatformPath = pathUtils.toWin32Path = pathUtils.toPosixPath = void 0;
-	const path = __importStar(require$$1__default);
+	const path = __importStar(require$$1__default$1);
 	/**
 	 * toPosixPath converts the given path to the posix form. On Windows, \\ will be
 	 * replaced with /.
@@ -25593,8 +25595,8 @@ function requireIoUtil () {
 		var _a;
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.getCmdPath = exports.tryGetExecutablePath = exports.isRooted = exports.isDirectory = exports.exists = exports.READONLY = exports.UV_FS_O_EXLOCK = exports.IS_WINDOWS = exports.unlink = exports.symlink = exports.stat = exports.rmdir = exports.rm = exports.rename = exports.readlink = exports.readdir = exports.open = exports.mkdir = exports.lstat = exports.copyFile = exports.chmod = void 0;
-		const fs = __importStar(require$$1$1);
-		const path = __importStar(require$$1__default);
+		const fs = __importStar(require$$1__default);
+		const path = __importStar(require$$1__default$1);
 		_a = fs.promises
 		// export const {open} = 'fs'
 		, exports.chmod = _a.chmod, exports.copyFile = _a.copyFile, exports.lstat = _a.lstat, exports.mkdir = _a.mkdir, exports.open = _a.open, exports.readdir = _a.readdir, exports.readlink = _a.readlink, exports.rename = _a.rename, exports.rm = _a.rm, exports.rmdir = _a.rmdir, exports.stat = _a.stat, exports.symlink = _a.symlink, exports.unlink = _a.unlink;
@@ -25784,7 +25786,7 @@ function requireIo () {
 	Object.defineProperty(io, "__esModule", { value: true });
 	io.findInPath = io.which = io.mkdirP = io.rmRF = io.mv = io.cp = void 0;
 	const assert_1 = require$$0$3;
-	const path = __importStar(require$$1__default);
+	const path = __importStar(require$$1__default$1);
 	const ioUtil = __importStar(requireIoUtil());
 	/**
 	 * Copies a file or folder.
@@ -26089,10 +26091,10 @@ function requireToolrunner () {
 	};
 	Object.defineProperty(toolrunner, "__esModule", { value: true });
 	toolrunner.argStringToArray = toolrunner.ToolRunner = void 0;
-	const os = __importStar(require$$0);
+	const os = __importStar(require$$0__default);
 	const events = __importStar(require$$4);
 	const child = __importStar(require$$2$2);
-	const path = __importStar(require$$1__default);
+	const path = __importStar(require$$1__default$1);
 	const io = __importStar(requireIo());
 	const ioUtil = __importStar(requireIoUtil());
 	const timers_1 = require$$6$1;
@@ -26832,7 +26834,7 @@ function requirePlatform () {
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.getDetails = exports.isLinux = exports.isMacOS = exports.isWindows = exports.arch = exports.platform = void 0;
-		const os_1 = __importDefault(require$$0);
+		const os_1 = __importDefault(require$$0__default);
 		const exec = __importStar(requireExec());
 		const getWindowsInfo = () => __awaiter(void 0, void 0, void 0, function* () {
 		    const { stdout: version } = yield exec.getExecOutput('powershell -command "(Get-CimInstance -ClassName Win32_OperatingSystem).Version"', undefined, {
@@ -26935,8 +26937,8 @@ function requireCore () {
 		const command_1 = requireCommand();
 		const file_command_1 = requireFileCommand();
 		const utils_1 = requireUtils$1();
-		const os = __importStar(require$$0);
-		const path = __importStar(require$$1__default);
+		const os = __importStar(require$$0__default);
+		const path = __importStar(require$$1__default$1);
 		const oidc_utils_1 = requireOidcUtils();
 		/**
 		 * The code to exit an action
@@ -27248,8 +27250,6 @@ function requireCore () {
 var coreExports = requireCore();
 
 var execExports = requireExec();
-
-var ioExports = requireIo();
 
 var toolCache = {};
 
@@ -28956,9 +28956,9 @@ function requireManifest () {
 		const core_1 = requireCore();
 		// needs to be require for core node modules to be mocked
 		/* eslint @typescript-eslint/no-require-imports: 0 */
-		const os = require$$0;
+		const os = require$$0__default;
 		const cp = require$$2$2;
-		const fs = require$$1$1;
+		const fs = require$$1__default;
 		function _findMatch(versionSpec, stable, candidates, archFilter) {
 		    return __awaiter(this, void 0, void 0, function* () {
 		        const platFilter = os.platform();
@@ -29188,10 +29188,10 @@ function requireToolCache () {
 	const core = __importStar(requireCore());
 	const io = __importStar(requireIo());
 	const crypto = __importStar(require$$0$1);
-	const fs = __importStar(require$$1$1);
+	const fs = __importStar(require$$1__default);
 	const mm = __importStar(requireManifest());
-	const os = __importStar(require$$0);
-	const path = __importStar(require$$1__default);
+	const os = __importStar(require$$0__default);
+	const path = __importStar(require$$1__default$1);
 	const httpm = __importStar(requireLib());
 	const semver = __importStar(requireSemver());
 	const stream = __importStar(require$$0$5);
@@ -29823,38 +29823,96 @@ var toolCacheExports = requireToolCache();
 
 async function run() {
     try {
+        // Get required inputs
         const version = coreExports.getInput('ecr-lifecycle-cleaner-version', {
             required: true
         });
         const command = coreExports.getInput('command', { required: true });
+        // Get optional inputs - global flags
+        const dryRun = coreExports.getBooleanInput('dry-run');
+        const allRepos = coreExports.getBooleanInput('all-repos');
+        const repoList = coreExports.getInput('repo-list');
+        const repoPattern = coreExports.getInput('repo-pattern');
+        // Command-specific inputs
+        const policyFile = coreExports.getInput('policy-file');
+        // Validate command
+        if (!['clean', 'setPolicy'].includes(command)) {
+            throw new Error(`Invalid command: ${command}. Must be 'clean' or 'setPolicy'`);
+        }
+        // Validate repo selection parameters
+        if ([allRepos, repoList, repoPattern].filter(Boolean).length > 1) {
+            throw new Error('Only one of all-repos, repo-list, or repo-pattern should be specified');
+        }
+        if (command === 'setPolicy' && !policyFile) {
+            throw new Error('policy-file input is required for setPolicy command');
+        }
+        if (policyFile && !require$$1.existsSync(policyFile)) {
+            throw new Error(`Policy file not found: ${policyFile}`);
+        }
+        // Get OS and architecture for downloading the right binary
+        const platform = require$$0.platform();
+        const arch = require$$0.arch();
+        // Map to compatible format for download URL
+        const osMap = {
+            win32: 'Windows',
+            darwin: 'Darwin',
+            linux: 'Linux'
+        };
+        const archMap = {
+            x64: 'x86_64',
+            arm64: 'arm64'
+        };
+        if (!osMap[platform] || !archMap[arch]) {
+            throw new Error(`Unsupported platform or architecture: ${platform} ${arch}`);
+        }
+        const binaryOS = osMap[platform];
+        const binaryArch = archMap[arch];
         // Download the ecr-lifecycle-cleaner binary
-        const url = `https://github.com/gjorgji-ts/ecr-lifecycle-cleaner/releases/download/v${version}/ecr-lifecycle-cleaner_Linux_x86_64.tar.gz`;
-        coreExports.debug(`Downloading from ${url}`);
+        const url = `https://github.com/gjorgji-ts/ecr-lifecycle-cleaner/releases/download/v${version}/ecr-lifecycle-cleaner_${binaryOS}_${binaryArch}.tar.gz`;
+        coreExports.info(`Downloading from ${url}`);
         const downloadPath = await toolCacheExports.downloadTool(url);
-        coreExports.debug('Extracting downloaded file');
+        coreExports.info('Extracting downloaded file');
         const extractedPath = await toolCacheExports.extractTar(downloadPath);
-        const binaryPath = require$$1.join(extractedPath, 'ecr-lifecycle-cleaner');
-        coreExports.debug(`Moving binary from ${binaryPath} to /usr/local/bin/ecr-lifecycle-cleaner`);
-        // Ensure the destination directory exists and we have permission to write to it
-        await ioExports.mkdirP('/usr/local/bin');
-        await execExports.exec('sudo', [
-            'mv',
-            binaryPath,
-            '/usr/local/bin/ecr-lifecycle-cleaner'
-        ]);
-        await execExports.exec('sudo', [
-            'chmod',
-            '+x',
-            '/usr/local/bin/ecr-lifecycle-cleaner'
-        ]);
-        // Run the ecr-lifecycle-cleaner command
-        const commandArgs = command.split(' ');
-        coreExports.debug(`Running ecr-lifecycle-cleaner with args ${commandArgs}`);
-        await execExports.exec('ecr-lifecycle-cleaner', commandArgs);
+        // Path to binary in the extracted directory
+        let binaryName = 'ecr-lifecycle-cleaner';
+        if (platform === 'win32') {
+            binaryName = 'ecr-lifecycle-cleaner.exe';
+        }
+        const binaryPath = require$$1$1.join(extractedPath, binaryName);
+        // Make binary executable
+        if (platform !== 'win32') {
+            await require$$1.promises.chmod(binaryPath, 0o755);
+        }
+        // Build the command arguments array
+        const commandArgs = [command];
+        // Add global flags
+        if (dryRun) {
+            commandArgs.push('--dryRun');
+        }
+        if (allRepos) {
+            commandArgs.push('--allRepos');
+        }
+        if (repoList) {
+            commandArgs.push('--repoList', repoList);
+        }
+        if (repoPattern) {
+            commandArgs.push('--repoPattern', repoPattern);
+        }
+        // Add command-specific flags
+        if (command === 'setPolicy' && policyFile) {
+            commandArgs.push('--policyFile', policyFile);
+        }
+        coreExports.info(`Running ecr-lifecycle-cleaner with args: ${commandArgs.join(' ')}`);
+        // Execute the command
+        const exitCode = await execExports.exec(binaryPath, commandArgs);
+        if (exitCode !== 0) {
+            throw new Error(`ecr-lifecycle-cleaner exited with code ${exitCode}`);
+        }
+        coreExports.info('Command completed successfully');
     }
     catch (error) {
         if (error instanceof Error) {
-            coreExports.debug(`Error: ${error.message}`);
+            coreExports.error(`Error: ${error.message}`);
             coreExports.setFailed(error.message);
         }
         else {
