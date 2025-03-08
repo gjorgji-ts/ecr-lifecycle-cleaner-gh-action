@@ -8,11 +8,9 @@ import * as core from '../__fixtures__/core'
 import * as exec from '../__fixtures__/exec'
 import * as tc from '../__fixtures__/tool-cache'
 
-// Store the mocked fs module for later access
 const fsMock = {
   existsSync: jest.fn().mockReturnValue(true),
   promises: {
-    // Properly type the mock function to avoid "not assignable to parameter of type 'never'" error
     chmod: jest
       .fn<(path: string, mode: number) => Promise<void>>()
       .mockResolvedValue()
@@ -93,7 +91,6 @@ describe('ecr-lifecycle-cleaner action', () => {
       ['clean', '--dryRun', '--allRepos']
     )
 
-    // Verify no failures were reported
     expect(core.setFailed).not.toHaveBeenCalled()
   })
 
@@ -117,7 +114,6 @@ describe('ecr-lifecycle-cleaner action', () => {
   })
 
   it('validates command input', async () => {
-    // Set invalid command
     core.getInput.mockImplementation((name) => {
       if (name === 'command') return 'invalidCommand'
       if (name === 'ecr-lifecycle-cleaner-version') return '1.2.1'
@@ -149,7 +145,6 @@ describe('ecr-lifecycle-cleaner action', () => {
   })
 
   it('validates only one repo selection parameter is used', async () => {
-    // Mock repo-list input
     let repoList = ''
 
     core.getInput.mockImplementation((name) => {
@@ -164,7 +159,6 @@ describe('ecr-lifecycle-cleaner action', () => {
       return false
     })
 
-    // Now set repo-list to trigger the validation error
     repoList = 'repo1,repo2'
 
     await run()
@@ -174,14 +168,13 @@ describe('ecr-lifecycle-cleaner action', () => {
     )
   })
 
+  // BS test - will need to fix this
   it('handles general errors during execution', async () => {
-    // Keep your existing mock setup
     const error = new Error('Download failed')
     tc.downloadTool.mockRejectedValueOnce(error)
 
     await run()
 
-    // Update expected error message to what's actually being thrown
     expect(core.setFailed).toHaveBeenCalledWith(
       'Unsupported platform or architecture: undefined undefined'
     )
