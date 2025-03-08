@@ -60,7 +60,7 @@ jobs:
             command: clean
             dry-run: 'true'
             all-repos: 'false'
-            repo-list: test-repo-1,test-repo-2
+            repo-list: test-app1
             use-policy: false
 
           - name: Clean Using Repo Pattern (Dry Run)
@@ -80,7 +80,7 @@ jobs:
             command: setPolicy
             dry-run: 'true'
             all-repos: 'false'
-            repo-list: test-repo-1,test-repo-2
+            repo-list: test-app1
             use-policy: true
 
           - name: Set Policy Using Repo Pattern (Dry Run)
