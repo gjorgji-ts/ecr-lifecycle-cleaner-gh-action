@@ -32,8 +32,8 @@ enforce lifecycle policies on ECR repositories and clean up orphaned images.
 | `dry-run`                       | Whether to perform a dry run without making changes                     | No                            | `true`  |
 | `all-repos`                     | Whether to apply the command to all repositories                        | No                            | `true`  |
 | `repo-list`                     | Comma-separated list of repository names to include                     | No                            | N/A     |
-| `repo-pattern`                  | Regex pattern to match repository names                                 | No                            | N/A     |
-| `policy-file`                   | Path to the lifecycle policy JSON file (required for setPolicy command) | No (Required for `setPolicy`) | N/A     |
+| `repo-pattern`                  | Regular expression pattern to match repository names                    | No                            | N/A     |
+| `policy-file`                   | Path to the lifecycle policy JSON file (required for setPolicy command) | Required for `setPolicy`      | N/A     |
 
 ## Example Workflows
 
@@ -142,6 +142,16 @@ jobs:
 - Use specific IAM roles/permissions following the principle of least privilege
 - Consider using OpenID Connect (OIDC) for secure, token-based authentication
   with AWS
+  
+### AWS Permissions
+
+The following IAM permissions are required to run this action:
+
+```json
+{
+    "WILL BE UPDATED": "SOON"
+}
+```
 
 ## Under the Hood
 
