@@ -30,7 +30,7 @@ enforce lifecycle policies on ECR repositories and clean up orphaned images.
 | `ecr-lifecycle-cleaner-version` | Version of the ECR Lifecycle Cleaner CLI to use                         | Yes                      | N/A     |
 | `command`                       | The command to run: `clean` or `setPolicy`                              | Yes                      | N/A     |
 | `dry-run`                       | Whether to perform a dry run without making changes                     | No                       | `true`  |
-| `all-repos`                     | Whether to apply the command to all repositories                        | No                       | `true`  |
+| `all-repos`                     | Whether to apply the command to all repositories                        | No                       | `false` |
 | `repo-list`                     | Comma-separated list of repository names to include                     | No                       | N/A     |
 | `repo-pattern`                  | Regular expression pattern to match repository names                    | No                       | N/A     |
 | `policy-file`                   | Path to the lifecycle policy JSON file (required for setPolicy command) | Required for `setPolicy` | N/A     |
@@ -62,7 +62,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Clean ECR Repositories
-        uses: gjorgji-ts/ecr-lifecycle-cleaner-gh-action@v1.0.0
+        uses: gjorgji-ts/ecr-lifecycle-cleaner-gh-action@v1.1.0
         with:
           ecr-lifecycle-cleaner-version: '1.2.1'
           command: 'clean'
@@ -93,12 +93,11 @@ jobs:
           aws-region: us-east-1
 
       - name: Apply Lifecycle Policy
-        uses: gjorgji-ts/ecr-lifecycle-cleaner-gh-action@v1.0.0
+        uses: gjorgji-ts/ecr-lifecycle-cleaner-gh-action@v1.1.0
         with:
           ecr-lifecycle-cleaner-version: '1.2.1'
           command: 'setPolicy'
           dry-run: 'false'
-          all-repos: 'false'
           repo-list: 'app-repo-1,app-repo-2'
           policy-file: './policies/lifecycle-policy.json'
 ```
@@ -126,12 +125,11 @@ jobs:
           aws-region: us-east-1
 
       - name: Apply Policy to Matching Repositories
-        uses: gjorgji-ts/ecr-lifecycle-cleaner-gh-action@v1.0.0
+        uses: gjorgji-ts/ecr-lifecycle-cleaner-gh-action@v1.1.0
         with:
           ecr-lifecycle-cleaner-version: '1.2.1'
           command: 'setPolicy'
           dry-run: 'false'
-          all-repos: 'false'
           repo-pattern: '^app-.*-prod$'
           policy-file: './policies/lifecycle-policy.json'
 ```
@@ -152,15 +150,15 @@ The following IAM permissions are required to run this action:
 - "ecr:DescribeRepositories" -- Allows the tool to list all the repositories in
   the account, which is required for `all-repos` input.
 - "ecr:ListImages" -- Allows the tool to list all the images in a repository,
-  which is required for the `clean` input.
+  which is required for the `clean` command.
 - "ecr:BatchGetImage" -- Allows the tool to get the image details, which is
-  required for the `clean` input.
+  required for the `clean` command.
 - "ecr:BatchDeleteImage" -- Allows the tool to delete the images, which is
-  required for the `clean` input.
+  required for the `clean` command.
 - "ecr:GetLifecyclePolicy" -- Allows the tool to get the existing lifecycle
-  policy, which is required for the `setPolicy` input.
+  policy, which is required for the `setPolicy` command.
 - "ecr:PutLifecyclePolicy" -- Allows the tool to set the lifecycle policy, which
-  is required for the `setPolicy` input.
+  is required for the `setPolicy` command.
 
 ## Under the Hood
 

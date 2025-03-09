@@ -24,7 +24,7 @@ inputs:
   all-repos:
     description: 'Whether to apply the command to all repositories'
     required: false
-    default: 'true'
+    default: 'false'
   repo-list:
     description: 'Comma-separated list of repository names to include'
     required: false
