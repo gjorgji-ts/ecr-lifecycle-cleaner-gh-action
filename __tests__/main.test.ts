@@ -168,7 +168,7 @@ describe('ecr-lifecycle-cleaner action', () => {
     )
   })
 
-  // BS test - will need to fix this
+  // BS test - will need to fix this with a better mock
   it('handles general errors during execution', async () => {
     const error = new Error('Download failed')
     tc.downloadTool.mockRejectedValueOnce(error)

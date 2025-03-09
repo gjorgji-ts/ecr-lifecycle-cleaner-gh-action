@@ -147,10 +147,21 @@ jobs:
 
 The following IAM permissions are required to run this action:
 
-```json
-{
-  "WILL BE UPDATED": "SOON"
-}
+- "sts:GetCallerIdentity" -- Allows the tool to identify the AWS account being
+  used, which is required for the ECR API calls.
+- "ecr:DescribeRepositories" -- Allows the tool to list all the repositories in
+  the account, which is required for `all-repos` input.
+- "ecr:ListImages" -- Allows the tool to list all the images in a repository,
+  which is required for the `clean` input.
+- "ecr:BatchGetImage" -- Allows the tool to get the image details, which is
+  required for the `clean` input.
+- "ecr:BatchDeleteImage" -- Allows the tool to delete the images, which is
+  required for the `clean` input.
+- "ecr:GetLifecyclePolicy" -- Allows the tool to get the existing lifecycle
+  policy, which is required for the `setPolicy` input.
+- "ecr:PutLifecyclePolicy" -- Allows the tool to set the lifecycle policy, which
+  is required for the `setPolicy` input.
+
 ```
 
 ## Under the Hood
@@ -162,3 +173,4 @@ to manage ECR repositories and images.
 ## License
 
 See the [LICENSE](LICENSE) file for details.
+```
