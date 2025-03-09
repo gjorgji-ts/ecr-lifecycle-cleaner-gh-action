@@ -162,8 +162,6 @@ The following IAM permissions are required to run this action:
 - "ecr:PutLifecyclePolicy" -- Allows the tool to set the lifecycle policy, which
   is required for the `setPolicy` input.
 
-```
-
 ## Under the Hood
 
 This action uses the
@@ -173,4 +171,3 @@ to manage ECR repositories and images.
 ## License
 
 See the [LICENSE](LICENSE) file for details.
-```
