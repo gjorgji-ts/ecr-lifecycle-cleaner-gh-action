@@ -15,13 +15,20 @@ enforce lifecycle policies on ECR repositories and clean up orphaned images.
 - AWS credentials configured (via
   [configure-aws-credentials](https://github.com/aws-actions/configure-aws-credentials))
 - AWS necessary permissions:
-  - **sts:GetCallerIdentity** -- Allows the tool to identify the AWS account being used, which is required for the ECR API calls.
-  - **ecr:DescribeRepositories** -- Allows the tool to list all the repositories in the account, which is required for the `--allRepos` flag.
-  - **ecr:ListImages** -- Allows the tool to list all the images in a repository, which is required for the `clean` command.
-  - **ecr:BatchGetImage** -- Allows the tool to get the image details, which is required for the `clean` command.
-  - **ecr:BatchDeleteImage** -- Allows the tool to delete the images, which is required for the `clean` command.
-  - **ecr:GetLifecyclePolicy** -- Allows the tool to get the existing lifecycle policy, which is required for the `setPolicy` command.
-  - **ecr:PutLifecyclePolicy** -- Allows the tool to set the lifecycle policy, which is required for the `setPolicy` command.
+  - **sts:GetCallerIdentity** -- Allows the tool to identify the AWS account
+    being used, which is required for the ECR API calls.
+  - **ecr:DescribeRepositories** -- Allows the tool to list all the repositories
+    in the account, which is required for the `--allRepos` flag.
+  - **ecr:ListImages** -- Allows the tool to list all the images in a
+    repository, which is required for the `clean` command.
+  - **ecr:BatchGetImage** -- Allows the tool to get the image details, which is
+    required for the `clean` command.
+  - **ecr:BatchDeleteImage** -- Allows the tool to delete the images, which is
+    required for the `clean` command.
+  - **ecr:GetLifecyclePolicy** -- Allows the tool to get the existing lifecycle
+    policy, which is required for the `setPolicy` command.
+  - **ecr:PutLifecyclePolicy** -- Allows the tool to set the lifecycle policy,
+    which is required for the `setPolicy` command.
 
 ## Features
 
