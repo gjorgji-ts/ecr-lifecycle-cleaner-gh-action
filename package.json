@@ -14,6 +14,7 @@
     "url": "https://github.com/gjorgji-ts/ecr-lifecycle-cleaner-gh-action/issues"
   },
   "keywords": [
+    "github",
     "actions",
     "AWS",
     "ECR"
