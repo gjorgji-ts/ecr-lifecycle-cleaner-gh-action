@@ -1,12 +1,11 @@
 // See: https://rollupjs.org/introduction/
 
-import { RollupOptions, Plugin } from 'rollup'
-
 import typescript from '@rollup/plugin-typescript'
-import nodeResolve from '@rollup/plugin-node-resolve'
+import { nodeResolve } from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 
-const config: RollupOptions = {
+/** @type {import('rollup').RollupOptions} */
+const config = {
   input: 'src/index.ts',
   output: {
     esModule: true,
@@ -15,13 +14,11 @@ const config: RollupOptions = {
     sourcemap: true
   },
   plugins: [
-    (typescript as unknown as () => Plugin)(),
-    (
-      nodeResolve as unknown as (options: { preferBuiltins: boolean }) => Plugin
-    )({
+    typescript(),
+    nodeResolve({
       preferBuiltins: true
     }),
-    (commonjs as unknown as () => Plugin)()
+    commonjs()
   ]
 }
 
