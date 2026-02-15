@@ -4,6 +4,9 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 15
+    cooldown:
+      default-days: 7
     groups:
       actions-minor:
         update-types:
@@ -14,6 +17,10 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 15
+    cooldown:
+      default-days: 7
+      semver-major-days: 7
     ignore:
       - dependency-name: '@types/node'
         update-types:
@@ -27,4 +34,5 @@ updates:
       npm-production:
         dependency-type: production
         update-types:
+          - minor
           - patch
