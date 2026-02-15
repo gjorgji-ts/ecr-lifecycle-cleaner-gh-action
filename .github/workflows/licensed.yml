@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
 
@@ -41,7 +41,7 @@ jobs:
 
       - name: Setup Ruby
         id: setup-ruby
-        uses: ruby/setup-ruby@ab177d40ee5483edb974554986f56b33477e21d0 # v1.265.0
+        uses: ruby/setup-ruby@675dd7ba1b06c8786a1480d89c384f5620a42647 # v1.281.0
         with:
           ruby-version: ruby
 
