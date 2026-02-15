@@ -23,7 +23,8 @@ set -e
 # 7. Set 'is_major_release' variable
 # 8. Point separate major release tag (e.g. v1, v2) to the new release
 # 9. Push the new tags (with commits, if any) to remote
-# 10. If this is a major release, create a 'releases/v#' branch and push
+# 10. Create a GitHub Release with auto-generated notes
+# 11. If this is a major release, create a 'releases/v#' branch and push
 #
 # Usage:
 #
@@ -121,7 +122,11 @@ else
 	echo -e "Tags: ${BOLD_GREEN}$latest_major_release_tag${OFF} and ${BOLD_GREEN}$new_tag${OFF} pushed to remote"
 fi
 
-# 10. If this is a major release, create a 'releases/v#' branch and push
+# 10. Create a GitHub Release
+gh release create "$new_tag" --title "$new_tag" --generate-notes
+echo -e "GitHub Release ${BOLD_GREEN}$new_tag${OFF} created"
+
+# 11. If this is a major release, create a 'releases/v#' branch and push
 if [ $is_major_release = 'yes' ]; then
 	git branch "releases/$new_major_release_tag" "$new_major_release_tag"
 	echo -e "Branch: ${BOLD_BLUE}releases/$new_major_release_tag${OFF} created from ${BOLD_BLUE}$new_major_release_tag${OFF} tag"
