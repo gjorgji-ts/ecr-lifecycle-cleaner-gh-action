@@ -1,5 +1,8 @@
 # ECR Lifecycle Cleaner GitHub Action
 
+> [!WARNING]
+> **This project is archived and no longer maintained.** No further updates, bug fixes, or support will be provided. Use at your own risk.
+
 [![GitHub Super-Linter](https://github.com/gjorgji-ts/ecr-lifecycle-cleaner-gh-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
 ![CI](https://github.com/gjorgji-ts/ecr-lifecycle-cleaner-gh-action/actions/workflows/ci.yml/badge.svg)
 [![Check dist/](https://github.com/gjorgji-ts/ecr-lifecycle-cleaner-gh-action/actions/workflows/check-dist.yml/badge.svg)](https://github.com/gjorgji-ts/ecr-lifecycle-cleaner-gh-action/actions/workflows/check-dist.yml)
